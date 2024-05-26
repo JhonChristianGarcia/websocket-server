@@ -1,10 +1,20 @@
 const path = require('path');
 const express = require('express');
 const WebSocket = require('ws');
+const helmet = require('helmet');
 const app = express();
 
-const WS_PORT = 8899;
+const WS_PORT = process.env.PORT || 8899;
 const HTTP_PORT = 8199;
+
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            connectSrc: ["'self'", "wss://websocket-server-2x1r.onrender.com"]
+        }
+    }
+}));
 
 const wsServer = new WebSocket.Server({ port: WS_PORT }, () => {
     console.log(`WS Server is listening at ${WS_PORT}`);
