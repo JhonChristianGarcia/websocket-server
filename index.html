@@ -6,7 +6,7 @@
     <img id="image" src="" width="450" height="320">
     <script>
         const img = document.getElementById('image');
-        const WS_URL = 'ws://websocket-server-2x1r.onrender.com/:8899';
+        const WS_URL = 'ws://websocket-server-2x1r.onrender.com:8899';
         const ws = new WebSocket(WS_URL);
         
         ws.onopen = () => console.log({}`Connected to ${WS_URL}`);    
