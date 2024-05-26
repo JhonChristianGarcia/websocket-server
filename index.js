@@ -41,7 +41,7 @@ wsServer.on('connection', (ws) => {
     });
 });
 
-app.get('/client', (req, res) => {
+app.get('/camera', (req, res) => {
     res.send(`
         <!DOCTYPE html>
         <html>
@@ -75,6 +75,16 @@ app.get('/client', (req, res) => {
         </html>
     `);
 });
+
+app.get('/client', (req, res) => {
+    res.sendFile(path.resolve(__dirname, './index.html'), (err) => {
+        if (err) {
+            console.error('Error sending client.html:', err);
+            res.status(500).send('Internal Server Error');
+        }
+    });
+});
+
 
 server.listen(HTTP_PORT, () => {
     console.log(`HTTP server listening at ${HTTP_PORT}`);

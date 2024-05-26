@@ -7,6 +7,7 @@ ws.onopen = () => console.log(`Connected to ${WS_URL}`);
 ws.onmessage = message => {
     const base64Data = message.data; // Assuming server sends base64 directly
     img.src = `data:image/jpeg;base64,${base64Data}`;
+    console.log(base64Data)
 }
 
 ws.onerror = (error) => {
