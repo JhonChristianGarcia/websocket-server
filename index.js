@@ -85,6 +85,10 @@ app.get('/client', (req, res) => {
     });
 });
 
+app.get("/test", (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+  });
+
 
 server.listen(HTTP_PORT, () => {
     console.log(`HTTP server listening at ${HTTP_PORT}`);
