@@ -2,16 +2,23 @@ const path = require('path');
 const express = require('express');
 const WebSocket = require('ws');
 const helmet = require('helmet');
+const crypto = require('crypto');
 const app = express();
 
 const WS_PORT = process.env.PORT || 8899;
 const HTTP_PORT = 8199;
 
+app.use((req, res, next) => {
+    res.locals.nonce = crypto.randomBytes(16).toString('base64');
+    next();
+});
+
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            connectSrc: ["'self'", "wss://websocket-server-2x1r.onrender.com"]
+            connectSrc: ["'self'", "wss://websocket-server-2x1r.onrender.com"],
+            scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.nonce}'`]
         }
     }
 }));
@@ -69,12 +76,38 @@ wsServer.on('connection', (ws, req) => {
 });
 
 app.get('/client', (req, res) => {
-    res.sendFile(path.resolve(__dirname, './index.html'), (err) => {
-        if (err) {
-            console.error('Error sending client.html:', err);
-            res.status(500).send('Internal Server Error');
-        }
-    });
+    res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Client</title>
+            <meta http-equiv="Content-Security-Policy" content="connect-src 'self' wss://websocket-server-2x1r.onrender.com; script-src 'self' 'nonce-${res.locals.nonce}'">
+        </head>
+        <body>
+            <img id="image" src="" width="450" height="320">
+            <script nonce="${res.locals.nonce}">
+                const img = document.getElementById('image');
+                const WS_URL = 'wss://websocket-server-2x1r.onrender.com';
+                const ws = new WebSocket(WS_URL);
+
+                ws.onopen = () => console.log(\`Connected to \${WS_URL}\`);
+
+                ws.onmessage = message => {
+                    const base64Data = message.data; // Assuming server sends base64 directly
+                    img.src = \`data:image/jpeg;base64,\${base64Data}\`;
+                }
+
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                }
+
+                ws.onclose = () => {
+                    console.log('WebSocket connection closed');
+                }
+            </script>
+        </body>
+        </html>
+    `);
 });
 
 app.listen(HTTP_PORT, () => {

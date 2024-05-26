@@ -2,29 +2,10 @@
 <html>
 <head>
     <title>Client</title>
-    <meta http-equiv="Content-Security-Policy" content="connect-src 'self' wss://websocket-server-2x1r.onrender.com;">
+    <meta http-equiv="Content-Security-Policy" content="connect-src 'self' wss://websocket-server-2x1r.onrender.com; script-src 'self'">
 </head>
 <body>
     <img id="image" src="" width="450" height="320">
-    <script>
-        const img = document.getElementById('image');
-        const WS_URL = 'wss://websocket-server-2x1r.onrender.com';
-        const ws = new WebSocket(WS_URL);
-        
-        ws.onopen = () => console.log(`Connected to ${WS_URL}`);
-        
-        ws.onmessage = message => {
-            const base64Data = message.data; // Assuming server sends base64 directly
-            img.src = `data:image/jpeg;base64,${base64Data}`;
-        }
-
-        ws.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        }
-
-        ws.onclose = () => {
-            console.log('WebSocket connection closed');
-        }
-    </script>
+    <script src="client.js"></script>
 </body>
 </html>
