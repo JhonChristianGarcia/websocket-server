@@ -1,0 +1,20 @@
+<html>
+<head>
+    <title>Client</title>
+</head>
+<body>
+    <img id="image" src="" width="450" height="320">
+    <script>
+        const img = document.getElementById('image');
+        const WS_URL = 'ws://192.168.137.1:8899';
+        const ws = new WebSocket(WS_URL);
+        
+        ws.onopen = () => console.log({}`Connected to ${WS_URL}`);    
+        
+        ws.onmessage = message => {
+            const base64Data = message.data; // Assuming server sends base64 directly
+            img.src = `data:image/jpeg;base64,${base64Data}`;
+        }
+    </script>
+</body>
+</html>
