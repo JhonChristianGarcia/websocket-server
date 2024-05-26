@@ -31,6 +31,7 @@ wsServer.on('connection', (ws) => {
     ws.on('message', (data) => {
         const base64Data = Buffer.from(data).toString('base64');
         ws.send(base64Data);
+        console.log(base64Data)
     });
     ws.on('close', () => {
         console.log('Connection closed');
